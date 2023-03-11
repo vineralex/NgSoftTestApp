@@ -4,8 +4,6 @@ import org.ngsoft.TaskAppAPI.entities.User;
 import org.ngsoft.TaskAppAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/users")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserAdminController {
 
     @Autowired
@@ -22,16 +19,9 @@ public class UserAdminController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping
+    @GetMapping("/")
     public List<User> findAll() {
         return userService.findAll();
-    }
-
-    @GetMapping("/user")
-    public String getCurrentUser(Authentication authentication) {
-        String username = authentication.getName();
-        // Do something with the username
-        return "Current User: " + username;
     }
 
     @GetMapping("/{id}")
@@ -49,7 +39,7 @@ public class UserAdminController {
         return userService.save(user);
     }
 
-    @PutMapping
+    @PutMapping("/")
     public User save(@RequestBody User user) {
         return userService.save(user);
     }

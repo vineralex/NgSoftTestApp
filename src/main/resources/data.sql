@@ -29,7 +29,7 @@ CREATE TABLE comments (
 
 
 INSERT INTO users (name, email, isAdmin, isActive, password)
-VALUES ('user', 'user@admin.com', false, true, '{bcrypt}$2a$10$38fjA3MyGMTxV0xvvyXIZuYkZXMLUwg.z0T.nxuPQE.Q6/DxbrLX6');
+VALUES ('user', 'user@admin.com', false, true, '{bcrypt}$2a$10$GtnC0/ODqq5/vKqEQZ53FOFIB6s9DSfC5Xb/g7PzpK7hwbiFYls1q');
 INSERT INTO users (name, email, isAdmin, isActive, password)
 VALUES ('admin', 'admin@admin.com', true, true, '{bcrypt}$2a$10$38fjA3MyGMTxV0xvvyXIZuYkZXMLUwg.z0T.nxuPQE.Q6/DxbrLX6');
 

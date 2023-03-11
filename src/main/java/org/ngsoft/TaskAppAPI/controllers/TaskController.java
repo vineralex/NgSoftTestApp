@@ -9,7 +9,7 @@ import org.ngsoft.TaskAppAPI.services.TaskService;
 import org.ngsoft.TaskAppAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -29,30 +29,41 @@ public class TaskController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{id}")
-    public List<Task> myTasks(@PathVariable Long id, @AuthenticationPrincipal Jwt authenticatedUser) {
-        // TODO: bring user id from auth
-        // TODO: check if user is active
-        return taskService.findByAssigneeAndStatusNotArchived(id);
+    @GetMapping("/")
+    public List<Task> myTasks(@AuthenticationPrincipal Jwt authenticatedUser) {
+        Long currentUserId = Long.valueOf(authenticatedUser.getClaim("sub"));
+        return taskService.findByAssigneeAndStatusNotArchived(currentUserId);
     }
 
     @PutMapping("/mark_completed/{id}")
-    public Task markCompleted(@PathVariable Long id) {
+    public ResponseEntity<Task> markCompleted(@PathVariable Long id, @AuthenticationPrincipal Jwt authenticatedUser) {
         Task task;
         try {
             task = taskService.findById(id);
         } catch (ChangeSetPersister.NotFoundException e) {
             throw new RuntimeException(e);
         }
-        // TODO: bring user id from auth
-        // TODO: check if user is active
-        // TODO: check if task assigned to the current user
+
+        // bring user id from auth
+        Long currentUserId = 0L;
+        try {
+            currentUserId = Long.valueOf(authenticatedUser.getClaim("sub"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // check if task assigned to the current user
+        if (task.getAssignee() != currentUserId) {
+            return ResponseEntity.badRequest().body(task);
+        }
+
         task.setStatus(Status.COMPLETED);
-        return taskService.save(task);
+        taskService.save(task);
+        return ResponseEntity.ok(task);
     }
 
     @PostMapping("/comment/{id}")
-    public Task commentTask(@PathVariable Long id, @RequestBody Comment comment) {
+    public ResponseEntity<Task> commentTask(@PathVariable Long id, @RequestBody Comment comment, @AuthenticationPrincipal Jwt authenticatedUser) {
         Task task = null;
         try {
             task = taskService.findById(id);
@@ -60,18 +71,28 @@ public class TaskController {
             throw new RuntimeException(e);
         }
 
-        // TODO: bring user id from auth
+        // bring user id from auth
+        Long currentUserId = 0L;
+        try {
+            currentUserId = Long.valueOf(authenticatedUser.getClaim("sub"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // check if task assigned to the current user
+        if (task.getAssignee() != currentUserId) {
+            return ResponseEntity.badRequest().body(task);
+        }
+
         User user = null;
         try {
-            user = userService.findById(1L);
+            user = userService.findById(currentUserId);
         } catch (ChangeSetPersister.NotFoundException e) {
             throw new RuntimeException(e);
         }
-        // TODO: check if user is active
-        // TODO: check if task assigned to the current user
-
         comment.setTask(task);
         comment.setUser(user);
-        return taskService.saveComment(task,comment);
+        taskService.saveComment(task,comment);
+        return ResponseEntity.ok(task);
     }
 }

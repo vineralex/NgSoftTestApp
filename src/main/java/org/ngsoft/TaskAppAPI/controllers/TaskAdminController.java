@@ -9,6 +9,8 @@ import org.ngsoft.TaskAppAPI.services.TaskService;
 import org.ngsoft.TaskAppAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,17 +27,17 @@ public class TaskAdminController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping("/")
     public List<Task> findAll() {
         return taskService.findAll();
     }
 
-    @PostMapping
+    @PostMapping("/")
     public Task create(@RequestBody Task task) {
         return  taskService.save(task);
     }
 
-    @PutMapping
+    @PutMapping("/")
     public Task update(@RequestBody Task task) {
         return  taskService.save(task);
     }
@@ -73,7 +75,7 @@ public class TaskAdminController {
     }
 
     @PostMapping("/comment/{id}")
-    public Task commentTask(@PathVariable Long id, @RequestBody Comment comment) {
+    public Task commentTask(@PathVariable Long id, @RequestBody Comment comment, @AuthenticationPrincipal Jwt authenticatedUser) {
         Task task = null;
         try {
             task = taskService.findById(id);
@@ -81,10 +83,17 @@ public class TaskAdminController {
             throw new RuntimeException(e);
         }
 
-        // TODO: bring admin id from auth
+        // bring admin id from auth
+        Long currentUserId = 0L;
+        try {
+            currentUserId = Long.valueOf(authenticatedUser.getClaim("sub"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         User user = null;
         try {
-            user = userService.findById(1L);
+            user = userService.findById(currentUserId);
         } catch (ChangeSetPersister.NotFoundException e) {
             throw new RuntimeException(e);
         }
