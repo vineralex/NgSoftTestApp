@@ -47,27 +47,18 @@ public class User {
     public User() { }
 
     public Collection<GrantedAuthority> getGrantedAuthoritiesList(){
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("NA");
 
-        if (this.isAdmin){
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_ADMIN");
-            authorities.add(grantedAuthority);
+        if (this.isActive) {
+            if (this.isAdmin) {
+                grantedAuthority = new SimpleGrantedAuthority("ADMIN");
+            } else {
+                grantedAuthority = new SimpleGrantedAuthority("USER");
+            }
         }
-        else {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
-            authorities.add(grantedAuthority);
-        }
+
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(grantedAuthority);
         return authorities;
     }
-//
-//    public void setPassword(String password) {
-//        // Hash the password using BCrypt algorithm before setting it
-//        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
-//    }
-//
-//    public boolean checkPassword(String password) {
-//        // Check if the given password matches the hashed password
-//        return BCrypt.checkpw(password, this.password);
-//    }
-
 }

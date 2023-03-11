@@ -1,12 +1,10 @@
 package org.ngsoft.TaskAppAPI.entities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.ArrayList;
@@ -25,6 +23,7 @@ public class TaskAppAPIUserDetails extends User {
 
     public TaskAppAPIUserDetails(org.ngsoft.TaskAppAPI.entities.User user) {
         super(user.getName(), user.getPassword(), user.getGrantedAuthoritiesList());
+
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();

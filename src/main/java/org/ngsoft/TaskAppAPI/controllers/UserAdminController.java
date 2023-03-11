@@ -1,14 +1,11 @@
 package org.ngsoft.TaskAppAPI.controllers;
 
-import org.ngsoft.TaskAppAPI.entities.TaskAppAPIUserDetails;
 import org.ngsoft.TaskAppAPI.entities.User;
 import org.ngsoft.TaskAppAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 

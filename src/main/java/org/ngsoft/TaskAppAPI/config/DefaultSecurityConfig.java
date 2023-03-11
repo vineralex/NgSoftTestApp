@@ -37,23 +37,9 @@ public class DefaultSecurityConfig {
         return http.build();
     }
 
-
-//    @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
-//    public SecurityFilterChain allowAllSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .securityMatcher("/admin/**")
-//                .csrf().disable()
-//                .headers().frameOptions().disable()
-//                .and()
-//                .authorizeHttpRequests().anyRequest().permitAll();
-//        return http.build();
-//    }
-
     @Bean
     PasswordEncoder passwordEncoder() {
 
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
 }

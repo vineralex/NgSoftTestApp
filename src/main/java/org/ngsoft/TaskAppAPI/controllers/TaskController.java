@@ -9,6 +9,9 @@ import org.ngsoft.TaskAppAPI.services.TaskService;
 import org.ngsoft.TaskAppAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +30,7 @@ public class TaskController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public List<Task> myTasks(@PathVariable Long id) {
+    public List<Task> myTasks(@PathVariable Long id, @AuthenticationPrincipal Jwt authenticatedUser) {
         // TODO: bring user id from auth
         // TODO: check if user is active
         return taskService.findByAssigneeAndStatusNotArchived(id);
